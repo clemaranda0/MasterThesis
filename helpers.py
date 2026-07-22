@@ -754,41 +754,6 @@ def prepare_waterfall_figure(waterfall_data):
     return waterfall_x, waterfall_y, waterfall_measure, waterfall_text
 
 
-def add_carrying_capacity(
-    waterfall_data, carrying_capacity, product, allocation_method
-):
-    mask = (allocated_carrying_capacity["product"] == product) & (
-        allocated_carrying_capacity["allocation"] == allocation_method
-    )
-    allocated_carrying_capacity_value = float(
-        allocated_carrying_capacity.loc[mask, "value"].iloc[0]
-    )
-    mit_co2e = float(waterfall_data.iloc[-1]["CO2e"])
-    gap = allocated_carrying_capacity_value - mit_co2e
-    gap_pct = gap / mit_co2e
-
-    cc_label = f"Carrying capacity – {allocation_method} allocation"
-    gap_row = pd.DataFrame(
-        [
-            {
-                "label": "Gap to carrying capacity",
-                "CO2e": gap,
-                "CO2e_pct": gap_pct,
-            }
-        ]
-    )
-    cc_row = pd.DataFrame(
-        [
-            {
-                "label": cc_label,
-                "CO2e": allocated_carrying_capacity_value,
-                "CO2e_pct": float("nan"),
-            }
-        ]
-    )
-    return pd.concat([waterfall_data, gap_row, cc_row], ignore_index=True)
-
-
 def is_feed(act, feed_agri_products):
     ref = (act.get("reference product") or "").lower()
     unit = (act.get("unit") or "").lower()
