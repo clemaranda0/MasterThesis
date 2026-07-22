@@ -1,6 +1,5 @@
 class Config:
     def __init__(self) -> None:
-
         # Premise secrets
 
         self.PROJECT_NAME = "EI 3.12"
@@ -8,29 +7,37 @@ class Config:
         self.SOURCE_VERSION = "3.12"
         self.KEY = "tUePmX_S5B8ieZkkM7WUU2CnO8SmShwmAeWK9x2rTFo="
 
-        self.products = ['potato', 'cheese']
+        self.products = ["potato", "cheese"]
 
         self.path_results = r"results/"
 
         self.years_to_process = [2050]
 
-        self.scenarios_dict = {"SSP1-PkBudg650": ['SSP1-PkBudg650+Potato', 'SSP1-PkBudg650+Electric_tractors_cheese', 'SSP1-PkBudg650+Electric_tractors_potato']}
-        self.scenarios_combined_dict = {"SSP1-PkBudg650": ['SSP1-PkBudg650+Milk+Feed']}
-        self.reference_scenarios_dict = {"SSP1-PkBudg650": ['Baseline', 'SSP1-PkBudg650']}
+        self.scenarios_dict = {
+            "SSP1-PkBudg650": [
+                "SSP1-PkBudg650+Potato",
+                "SSP1-PkBudg650+Electric_tractors_cheese",
+                "SSP1-PkBudg650+Electric_tractors_potato",
+            ]
+        }
+        self.scenarios_combined_dict = {"SSP1-PkBudg650": ["SSP1-PkBudg650+Milk+Feed"]}
+        self.reference_scenarios_dict = {
+            "SSP1-PkBudg650": ["Baseline", "SSP1-PkBudg650"]
+        }
 
         self.feed_products = [
-        "alfalfa-grass silage",
-        "maize silage",
-        "hay",
-        "barley grain",
-        "maize grain",
-        "oat grain",
-        "wheat grain",
-        "soybean",
-        "wheat bran",
-        "rape meal",
-        "protein feed",
-        "straw",
+            "alfalfa-grass silage",
+            "maize silage",
+            "hay",
+            "barley grain",
+            "maize grain",
+            "oat grain",
+            "wheat grain",
+            "soybean",
+            "wheat bran",
+            "rape meal",
+            "protein feed",
+            "straw",
         ]
 
         self.primary_crop_products = [
@@ -78,27 +85,26 @@ class Config:
             "Sulfur dioxide",
         ]
 
-        self.CALORIFIC_VALUE_DIESEL = 42.8 # MJ/kg
+        self.CALORIFIC_VALUE_DIESEL = 42.8  # MJ/kg
 
-        self.CONVERSION_FACTOR_kWh_to_MJ = 3.6 # kWh/MJ
+        self.CONVERSION_FACTOR_kWh_to_MJ = 3.6  # kWh/MJ
 
         self.efficiency_diesel_tractor = 0.35
 
         self.efficiency_electric_tractor = 0.85
 
         self.sdf_cols = [
-    "from activity name",
-    "from reference product",
-    "from location",
-    "from categories",
-    "from database",
-    "from key",
-    "to activity name",
-    "to reference product",
-    "to location",
-    "to categories",
-    "to database",
-    "to key",
-    "flow type",
-]
-
+            "from activity name",
+            "from reference product",
+            "from location",
+            "from categories",
+            "from database",
+            "from key",
+            "to activity name",
+            "to reference product",
+            "to location",
+            "to categories",
+            "to database",
+            "to key",
+            "flow type",
+        ]
