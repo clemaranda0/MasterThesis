@@ -7,23 +7,25 @@ class Config:
         self.SOURCE_VERSION = "3.12"
         self.KEY = "tUePmX_S5B8ieZkkM7WUU2CnO8SmShwmAeWK9x2rTFo="
 
-        self.products = ["potato", "cheese"]
+        # SDF columns
 
-        self.path_results = r"results/"
+        self.sdf_cols = [
+            "from activity name",
+            "from reference product",
+            "from location",
+            "from categories",
+            "from database",
+            "from key",
+            "to activity name",
+            "to reference product",
+            "to location",
+            "to categories",
+            "to database",
+            "to key",
+            "flow type",
+        ]
 
-        self.years_to_process = [2050]
-
-        self.scenarios_dict = {
-            "SSP1-PkBudg650": [
-                "SSP1-PkBudg650+Potato",
-                "SSP1-PkBudg650+Electric_tractors_cheese",
-                "SSP1-PkBudg650+Electric_tractors_potato",
-            ]
-        }
-        self.scenarios_combined_dict = {"SSP1-PkBudg650": ["SSP1-PkBudg650+Milk+Feed"]}
-        self.reference_scenarios_dict = {
-            "SSP1-PkBudg650": ["Baseline", "SSP1-PkBudg650"]
-        }
+        # AD scenario parameters
 
         self.feed_products = [
             "alfalfa-grass silage",
@@ -68,6 +70,8 @@ class Config:
         self.CH4_NAME = "Methane, non-fossil"
         self.N2O_NAME = "Dinitrogen monoxide"
 
+        # AM scenario parameters
+
         self.diesel_combustion_flows = [
             "Ammonia",
             "Benzene",
@@ -92,19 +96,3 @@ class Config:
         self.efficiency_diesel_tractor = 0.35
 
         self.efficiency_electric_tractor = 0.85
-
-        self.sdf_cols = [
-            "from activity name",
-            "from reference product",
-            "from location",
-            "from categories",
-            "from database",
-            "from key",
-            "to activity name",
-            "to reference product",
-            "to location",
-            "to categories",
-            "to database",
-            "to key",
-            "flow type",
-        ]
