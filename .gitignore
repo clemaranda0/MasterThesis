@@ -1,0 +1,33 @@
+# macOS system files
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# Logs
+*.log
+unlinked.log
+
+# Generated exports
+export/
+
+# Generated figures / plots
+*.png
+
+# Temporary test files
+test.csv
+test.ipynb
+
+# Optional: other temporary files
+*.tmp
+*.temp
+
+# Main notebooks and classification files
+main_graphs.ipynb
+missing_classifications.csv
