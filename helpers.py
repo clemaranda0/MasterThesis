@@ -7,6 +7,10 @@ import itertools
 def process_combined_results(
     scenario_results, scenario_group, year, product, impact_category
 ):
+    """
+    Process Activity Browser results from combined scenarios for a given year and impact category
+    """
+    # Formatting
     cols_to_drop = [col for col in scenario_results.columns if "baseline" in col] + [
         "Unnamed: 0"
     ]
@@ -35,7 +39,7 @@ def process_combined_results(
         scenario_results[scenario_results["reference_product_name"] == "Score"].index,
         inplace=True,
     )
-
+    # Compute share of total impact
     scenario_results["share"] = scenario_results["value"] / scenario_results.groupby(
         ["final_product_name", "scenario", "year", "impact_category"]
     )["value"].transform("sum")
@@ -55,6 +59,10 @@ def process_combined_results(
 
 
 def process_results(scenario_results, scenario_group, year, product, impact_category):
+    """
+    Process Activity Browser results for a given impact category and year
+    """
+    # Formatting
     scenario_results = scenario_results.drop(columns=["Unnamed: 0", "baseline"])
     scenario_results.rename({"index": "reference_product_name"}, axis=1, inplace=True)
     scenario_results.set_index("reference_product_name", inplace=True)
@@ -78,7 +86,7 @@ def process_results(scenario_results, scenario_group, year, product, impact_cate
         scenario_results[scenario_results["reference_product_name"] == "Score"].index,
         inplace=True,
     )
-
+    # Compute share of total impact
     scenario_results["share"] = scenario_results["value"] / scenario_results.groupby(
         ["final_product_name", "scenario", "year", "impact_category"]
     )["value"].transform("sum")
@@ -97,33 +105,12 @@ def process_results(scenario_results, scenario_group, year, product, impact_cate
     ]
 
 
-def process_non_grouped_results(results, scenario):
-    df = results.drop(columns=["Unnamed: 0", "unit", "database"])
-
-    df.set_index("index", inplace=True)
-
-    df = df.melt(
-        id_vars=["reference product", "name", "location"],
-        var_name="_col",
-        value_name=f"value_{scenario}",
-    )
-
-    df["final_product_name"] = df["_col"].str.split("|").str[0].str.split(",").str[0]
-
-    df = df[
-        [
-            "final_product_name",
-            "reference product",
-            "name",
-            "location",
-            f"value_{scenario}",
-        ]
-    ].dropna()
-
-    return df
-
-
 def process_all_impacts_results(scenario_results, scenario, year, product):
+    """
+    Process Activity Browser results for all impact categories and a given year
+    """
+    # Formatting
+
     scenario_results["final_product_name"] = product
     scenario_results["scenario"] = scenario
 
@@ -131,6 +118,8 @@ def process_all_impacts_results(scenario_results, scenario, year, product):
     scenario_results.set_index("reference_product_name", inplace=True)
 
     scenario_results.drop(columns=["Unnamed: 0"], inplace=True)
+
+    # Pivot results to have impact category in a single column
 
     scenario_results = scenario_results.reset_index().melt(
         id_vars=["scenario", "reference_product_name", "final_product_name"],
@@ -148,6 +137,8 @@ def process_all_impacts_results(scenario_results, scenario, year, product):
         scenario_results[scenario_results["reference_product_name"] == "Score"].index,
         inplace=True,
     )
+    # Compute share of total impact
+
     scenario_results["share"] = scenario_results["value"] / scenario_results.groupby(
         ["final_product_name", "impact_category", "scenario"]
     )["value"].transform("sum")
@@ -170,6 +161,12 @@ def process_all_impacts_results(scenario_results, scenario, year, product):
 
 
 def process_timeline_results(scenario_results, scenario, product, impact_category):
+    """
+    Process Activity Browser results for all years and for a given impact category
+    """
+
+    # Formatting
+
     scenario_results["final_product_name"] = product
     scenario_results["scenario"] = scenario
     scenario_results.rename({"index": "reference_product_name"}, axis=1, inplace=True)
@@ -191,6 +188,8 @@ def process_timeline_results(scenario_results, scenario, product, impact_categor
         scenario_results[scenario_results["reference_product_name"] == "Score"].index,
         inplace=True,
     )
+    # Compute share of total impact
+
     scenario_results["share"] = scenario_results["value"] / scenario_results.groupby(
         ["final_product_name", "scenario", "year"]
     )["value"].transform("sum")
@@ -212,11 +211,12 @@ def process_timeline_results(scenario_results, scenario, product, impact_categor
 
 
 def add_activity_metrics_vs_scenario(full_results, reference_scenario):
+    """
+    Compute variation metrics compared to a reference scenario
+    """
     df = full_results.copy()
 
-    # ==========================================
-    # 1. Define reference name + filters
-    # ==========================================
+    # Identify scenario and create columns for metrics
     if reference_scenario == "baseline":
         reference_scenario_name = "baseline"
         ref_filter = df["scenario"] == reference_scenario
@@ -232,9 +232,7 @@ def add_activity_metrics_vs_scenario(full_results, reference_scenario):
     var_pct_col = f"variation_activity_vs_{reference_scenario_name}_pct"
     contrib_col = f"contribution_activity_vs_{reference_scenario_name}_pct"
 
-    # ==========================================
-    # 2. Build reference values (activity level)
-    # ==========================================
+    # Compute impact value at activity level for the reference scenario
     reference_value = (
         df.loc[
             ref_filter,
@@ -253,9 +251,7 @@ def add_activity_metrics_vs_scenario(full_results, reference_scenario):
         .rename(columns={"value": ref_col})
     )
 
-    # ==========================================
-    # 3. Build total reference (per product + impact)
-    # ==========================================
+    # Compute total impact value for the reference scenario
     total_reference = (
         reference_value.groupby(
             ["final_product_name", "impact_category"], as_index=False
@@ -264,9 +260,7 @@ def add_activity_metrics_vs_scenario(full_results, reference_scenario):
         .rename(columns={ref_col: total_col})
     )
 
-    # ==========================================
-    # 4. Merge reference
-    # ==========================================
+    # Add reference values on each row
     df = df.merge(
         reference_value,
         on=["reference_product_name", "final_product_name", "impact_category"],
@@ -279,9 +273,7 @@ def add_activity_metrics_vs_scenario(full_results, reference_scenario):
         how="left",
     )
 
-    # ==========================================
-    # 5. Compute metrics only for non-reference rows
-    # ==========================================
+    # Compute the metrics for all scenarios different than the reference
     mask = ~ref_filter
 
     denom_var = df.loc[mask, ref_col].replace(0, np.nan)
@@ -291,22 +283,20 @@ def add_activity_metrics_vs_scenario(full_results, reference_scenario):
     df.loc[mask, var_pct_col] = df.loc[mask, var_abs_col] / denom_var
     df.loc[mask, contrib_col] = df.loc[mask, var_abs_col] / denom_contrib
 
-    # ==========================================
-    # 6. Clean reference rows
-    # ==========================================
+    # Cleaning
     df[var_abs_col] = df[var_abs_col].fillna(0)
     df[var_pct_col] = df[var_pct_col].fillna(0)
     df[contrib_col] = df[contrib_col].fillna(0)
 
-    # ==========================================
-    # 7. Cleanup
-    # ==========================================
     df.drop(columns=[ref_col, total_col], inplace=True)
 
     return df
 
 
 def get_baseline_sdf(activity_list):
+    """
+    Get a summary of all the exchanges (technosphere and biosphere) for activities in a given list
+    """
     sdf_data = []
 
     for activity in activity_list:
@@ -346,16 +336,22 @@ def generate_methane_mitigation_scenario(
     feeding_level_variation,
     CH4_intensity_variation,
 ):
+    """
+    Apply SDF transformations for ENT scenario
+    """
+    # Get baseline exchanges
+
     sdf_milk_scenario = sdf_baseline.copy()
 
     sdf_milk_scenario = sdf_milk_scenario[
         (sdf_milk_scenario["flow type"] != "production")
     ]
-
+    # Identify activities not to scale with the yield
     exclusions_yield = exclusions_yield[exclusions_yield["product"] == "cheese"]
 
     column_scenario = f"{scenario_name}"
 
+    # Identify feed inputs
     mask_feeding = (sdf_milk_scenario["from unit"] == "kilogram") & (
         sdf_milk_scenario["from reference product"].str.contains(
             "|".join(feed_agri_products), case=False, na=False
@@ -370,14 +366,20 @@ def generate_methane_mitigation_scenario(
         sdf_milk_scenario.loc[(mask_exclusions_yield), "baseline"]
     )
 
+    # DMI transformation
+
     sdf_milk_scenario.loc[mask_feeding, column_scenario] = (
         sdf_milk_scenario.loc[mask_feeding, "baseline"] * (1 + feeding_level_variation)
     ) / (1 + yield_variation)
+
+    # Yield scaling
+
     sdf_milk_scenario.loc[(~mask_feeding & ~mask_exclusions_yield), column_scenario] = (
         sdf_milk_scenario.loc[(~mask_feeding & ~mask_exclusions_yield), "baseline"]
         / (1 + yield_variation)
     )
 
+    # CH4 transformation
     sdf_milk_scenario.loc[
         sdf_milk_scenario["from activity name"] == CH4_name, column_scenario
     ] = sdf_milk_scenario.loc[
@@ -396,8 +398,11 @@ def generate_sdf_supplements(
     scenario_name,
     dose_supplement,
 ):
+    """
+    Create SDF for upstream production burden associated with feed supplements
+    """
     sdf_baseline = sdf_baseline[sdf_baseline["flow type"] != "production"]
-
+    # DMI calculation
     mask_feeding = (sdf_baseline["from unit"] == "kilogram") & (
         sdf_baseline["from reference product"].str.contains(
             "|".join(feed_agri_products), case=False, na=False
@@ -421,6 +426,8 @@ def generate_sdf_supplements(
         ["to activity name", "to location"], as_index=False
     )["baseline_DM"].sum()
 
+    # Compute supplement quantity
+
     dmi[f"{scenario_name}"] = dmi["baseline_DM"] * dose_supplement
 
     milk_production_cols = [c for c in sdf_baseline.columns if c.startswith("to ")] + [
@@ -437,6 +444,7 @@ def generate_sdf_supplements(
         how="inner",
     )
 
+    # Link quantity with activity for feed supplement in AB
     supplement_activity = [
         activity for activity in ei_mitigation if supplement_name in activity["name"]
     ]
@@ -469,6 +477,10 @@ def generate_potato_scenario(
     CO2_variation,
     N2O_variation,
 ):
+    """
+    Apply SDF transformations for AD scenario for potato
+    """
+    # Get baseline exchanges
     sdf_potato_scenario = sdf_baseline.copy()
 
     sdf_potato_scenario = sdf_potato_scenario[
@@ -483,19 +495,27 @@ def generate_potato_scenario(
         exclusions_yield["from activity name"]
     )
 
+    # Exclude activities not to be scaled with yield
+
     sdf_potato_scenario.loc[(mask_exclusions_yield), column_scenario] = (
         sdf_potato_scenario.loc[(mask_exclusions_yield), "baseline"]
     )
+
+    # Yield scaling
 
     sdf_potato_scenario.loc[(~mask_exclusions_yield), column_scenario] = (
         sdf_potato_scenario.loc[(~mask_exclusions_yield), "baseline"]
         / (1 + yield_variation)
     )
+
+    # CO2 transformation
     sdf_potato_scenario.loc[
         sdf_potato_scenario["from activity name"] == CO2_name, column_scenario
     ] = sdf_potato_scenario.loc[
         sdf_potato_scenario["from activity name"] == CO2_name, "baseline"
     ] * ((1 + CO2_variation) / (1 + yield_variation))
+
+    # N2O transformation
     sdf_potato_scenario.loc[
         sdf_potato_scenario["from activity name"] == N2O_name, column_scenario
     ] = sdf_potato_scenario.loc[
@@ -506,6 +526,9 @@ def generate_potato_scenario(
 
 
 def add_label(full_results, consuming_activities_tractor, feed_agri_products):
+    """
+    Add label to group similar activities
+    """
     full_results["label"] = full_results["reference_product_name"]
 
     # Energy
@@ -578,6 +601,9 @@ def add_label(full_results, consuming_activities_tractor, feed_agri_products):
 
 
 def get_consuming_activities(activity_list):
+    """
+    Retrieve the set of activities that use any activity from the input list as an input in ecoinvent
+    """
     consuming_activities = set()
 
     for activity in activity_list:
@@ -590,6 +616,9 @@ def get_consuming_activities(activity_list):
 def prepare_waterfall_data(
     data, product, background_scenario, mitigation_scenario, cutoff_value, label_to_show
 ):
+    """
+    Prepare data for the waterfall visualization of contributions
+    """
     columns = [
         "scenario",
         "final_product_name",
@@ -716,6 +745,10 @@ def prepare_waterfall_data(
 
 
 def prepare_waterfall_figure(waterfall_data):
+    """
+    Prepare data for the waterfall visualization of contributions
+    """
+
     wd = waterfall_data.reset_index(drop=True)
     n = len(wd)
     waterfall_x = wd["label"].fillna("").astype(str).tolist()
@@ -755,6 +788,9 @@ def prepare_waterfall_figure(waterfall_data):
 
 
 def is_feed(act, feed_agri_products):
+    """
+    Identify activities matching the list of feed products provided
+    """
     ref = (act.get("reference product") or "").lower()
     unit = (act.get("unit") or "").lower()
 
@@ -762,17 +798,23 @@ def is_feed(act, feed_agri_products):
 
 
 def is_production(act):
+    """
+    Identify production exchanges
+    """
     name = act["name"].lower()
     return "production" in name
 
 
 def extract_feed_supply_chain(start_activities, feed_agri_products):
+    """
+    Traverse the supply chain graph of cow milk activities to identify agricultural feed products
+    """
     sdf_data = []
     visited = set()
 
     activity_list = start_activities
     tier = 1
-
+    # Iterate on the next activities to explore
     while len(activity_list) > 0:
         print(f"Tier {tier}")
 
@@ -784,7 +826,7 @@ def extract_feed_supply_chain(start_activities, feed_agri_products):
             if act_key in visited:
                 continue
             visited.add(act_key)
-
+            # Check if the visited activity is a feed production activity
             for exc in activity.exchanges():
                 if exc["type"] == "production":
                     continue
@@ -792,7 +834,7 @@ def extract_feed_supply_chain(start_activities, feed_agri_products):
                 input_act = exc.input
 
                 input_is_feed = is_feed(input_act, feed_agri_products)
-
+                # If yes, add the information in the returned SDF
                 if is_feed(activity, feed_agri_products) and is_production(activity):
                     sdf_data.append(
                         {
@@ -820,7 +862,7 @@ def extract_feed_supply_chain(start_activities, feed_agri_products):
                             "baseline": exc["amount"],
                         }
                     )
-
+                # If one of the input is a feed activity, add it to the next activities to be visited
                 if input_is_feed:
                     next_activities.add(input_act)
 
@@ -864,6 +906,9 @@ def generate_cow_feed_scenario(
     CO2_variation,
     N2O_variation,
 ):
+    """
+    Apply SDF transformations for AD scenario for cheese
+    """
     sdf_feed_scenario = sdf_baseline.copy()
 
     sdf_feed_scenario = sdf_feed_scenario[
@@ -872,14 +917,20 @@ def generate_cow_feed_scenario(
 
     column_scenario = f"{scenario_name}"
 
+    # Yield scaling
+
     sdf_feed_scenario.loc[:, column_scenario] = sdf_feed_scenario.loc[:, "baseline"] / (
         1 + yield_variation
     )
+
+    # CO2 transformation
     sdf_feed_scenario.loc[
         sdf_feed_scenario["from activity name"] == CO2_name, column_scenario
     ] = sdf_feed_scenario.loc[
         sdf_feed_scenario["from activity name"] == CO2_name, "baseline"
     ] * ((1 + CO2_variation) / (1 + yield_variation))
+
+    # N2O transformation
     sdf_feed_scenario.loc[
         sdf_feed_scenario["from activity name"] == N2O_name, column_scenario
     ] = sdf_feed_scenario.loc[
@@ -889,41 +940,10 @@ def generate_cow_feed_scenario(
     return sdf_feed_scenario
 
 
-def get_baseline_production_exchanges(activities, background_database, future_columns):
-    consuming_activities = set()
-    for activity in activities:
-        for exc in activity.upstream():
-            consuming_activities.add(exc.output)
-
-    sdf_baseline_consuming_activities = get_baseline_sdf(
-        sorted(consuming_activities, key=lambda a: a.get("name", ""))
-    )
-
-    activities_names = {a["name"] for a in activities}
-    sdf_baseline_exchanges = (
-        sdf_baseline_consuming_activities[
-            (
-                sdf_baseline_consuming_activities["from activity name"].isin(
-                    activities_names
-                )
-                & (
-                    sdf_baseline_consuming_activities["to database"]
-                    == background_database.name
-                )
-            )
-        ]
-        .reset_index(drop=True)
-        .copy()
-    )
-
-    sdf_baseline_exchanges = sdf_baseline_exchanges.assign(
-        **{c: sdf_baseline_exchanges["baseline"] for c in future_columns}
-    )
-
-    return sdf_baseline_exchanges
-
-
 def get_activity_information(activity_list):
+    """
+    Get details about a given set of activities
+    """
     sdf_data = []
     for activity in activity_list:
         sdf_data.append(
@@ -950,6 +970,11 @@ def switch_fuel_tractors(
     efficiency_electric_tractor,
     sdf_cols,
 ):
+    """
+    Apply SDF transformations for ET scenario
+    """
+
+    # Identify diesel inputs
     mask_diesel_technosphere = (
         (sdf_tractor_consuming_baseline["flow type"] == "technosphere")
         & (
@@ -963,6 +988,8 @@ def switch_fuel_tractors(
             )
         )
     )
+
+    # Identify combustion flows
     mask_diesel_combustion = (
         sdf_tractor_consuming_baseline["flow type"] == "biosphere"
     ) & (
@@ -1075,6 +1102,9 @@ def switch_fuel_tractors(
 
 
 def import_scenario_parameters(scenario_definitions, scenario_group):
+    """
+    Format the scenario parameters
+    """
     scenarios_group = scenario_definitions[
         scenario_definitions["scenario_group"] == scenario_group
     ][["scenario", "variable", "unit", "value"]]
@@ -1094,6 +1124,9 @@ def import_scenario_parameters(scenario_definitions, scenario_group):
 
 
 def add_biochar_impacts(sdf_baseline, scenario_name, biochar_activity, dose_biochar):
+    """
+    Generate SDF for upstream production burden for biochar
+    """
     sdf_biochar_scenario = sdf_baseline.copy()
     sdf_biochar_scenario = sdf_biochar_scenario[
         sdf_biochar_scenario["flow type"] == "production"
@@ -1140,6 +1173,9 @@ def generate_improved_fertilizer_rate_scenario(
     N_fertilizer_to_scale,
     variation_N_fertilizer,
 ):
+    """
+    Apply SDF transformation for FR scenario
+    """
     sdf_scenario = sdf_baseline.copy()
 
     sdf_scenario = sdf_scenario[(sdf_scenario["flow type"] != "production")]
@@ -1151,6 +1187,7 @@ def generate_improved_fertilizer_rate_scenario(
     mask_exclusions_yield = sdf_scenario["from activity name"].isin(
         exclusions_yield["from activity name"]
     )
+    # Identify N fertilizer inputs
     mask_N_fertilizer = (sdf_scenario["flow type"] == "technosphere") & (
         sdf_scenario["from activity name"].str.contains("|".join(N_fertilizer_to_scale))
     )
@@ -1158,20 +1195,27 @@ def generate_improved_fertilizer_rate_scenario(
     sdf_scenario.loc[(mask_exclusions_yield), column_scenario] = sdf_scenario.loc[
         (mask_exclusions_yield), "baseline"
     ]
+
+    # Fertilizer transformation
     sdf_scenario.loc[(mask_N_fertilizer), column_scenario] = sdf_scenario.loc[
         (mask_N_fertilizer), "baseline"
     ] * (1 + variation_N_fertilizer)
 
+    # Yield scaling
     sdf_scenario.loc[
         (~(mask_exclusions_yield | mask_N_fertilizer)), column_scenario
     ] = sdf_scenario.loc[(~(mask_exclusions_yield | mask_N_fertilizer)), "baseline"] / (
         1 + yield_variation
     )
+
+    # CO2 transformation
     sdf_scenario.loc[
         sdf_scenario["from activity name"] == CO2_name, column_scenario
     ] = sdf_scenario.loc[sdf_scenario["from activity name"] == CO2_name, "baseline"] * (
         (1 + CO2_variation) / (1 + yield_variation)
     )
+
+    # N2O transformation
     sdf_scenario.loc[
         sdf_scenario["from activity name"] == N2O_name, column_scenario
     ] = sdf_scenario.loc[sdf_scenario["from activity name"] == N2O_name, "baseline"] * (
@@ -1187,6 +1231,9 @@ def combine_scenarios(
     sdf_cols,
     sep="+",
 ):
+    """
+    Create SDF for combined scenarios based on two SDFs
+    """
     sdf1 = sdf1.set_index(["from key", "to key", "flow type"], drop=False)
     sdf2 = sdf2.set_index(["from key", "to key", "flow type"], drop=False)
 
@@ -1216,51 +1263,27 @@ def combine_scenarios(
 
 
 def close_results(all_results):
-    # ==========================================
-    # Activity definition
-    # ==========================================
+    """
+    Complete the results by generating all scenario–activity combinations and
+    filling missing values for `value` and `share` with zeros.
+    """
     key_cols = ["final_product_name", "reference_product_name"]
-
-    # ==========================================
-    # Scenario dimensions
-    # ==========================================
     scenario_cols = ["scenario_group", "scenario", "year", "impact_category"]
-
-    # ==========================================
-    # 1. Activity space
-    # only by impact category
-    # ==========================================
     activity_space = all_results[["impact_category"] + key_cols].drop_duplicates()
-
-    # ==========================================
-    # 2. Scenario space
-    # ==========================================
     scenario_space = all_results[scenario_cols].drop_duplicates()
 
-    # ==========================================
-    # 3. Create closed space
-    # ==========================================
     closed_space = scenario_space.merge(
         activity_space, on="impact_category", how="left"
     )
 
-    # ==========================================
-    # 4. Merge original data
-    # ==========================================
     closed_results = closed_space.merge(
         all_results, on=scenario_cols + key_cols, how="left"
     )
 
-    # ==========================================
-    # 5. Fill missing values
-    # ==========================================
     closed_results["value"] = closed_results["value"].fillna(0)
 
     closed_results["share"] = closed_results["share"].fillna(0)
 
-    # ==========================================
-    # 6. Sort
-    # ==========================================
     closed_results = closed_results.sort_values(scenario_cols + key_cols).reset_index(
         drop=True
     )
