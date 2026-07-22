@@ -1,0 +1,44 @@
+activity name,reference product,feeding dairy cow (yes/no),comment,is_dry,conversion_to_kgDM
+alfalfa/grass silage production,alfalfa-grass silage,Yes,Main forage feed for dairy cows,Yes,1
+"barley grain, feed production","barley grain, feed",Yes,Concentrate feed ingredient,No,0.86
+"market for energy feed, gross","energy feed, gross",Yes,Generic energy concentrate for feed ration,No,5.1
+hay production,hay,Yes,Forage feed,Yes,1
+"market for limestone, crushed, washed","limestone, crushed, washed",No,Feed additive for Ca supplementation,,
+market for magnesium oxide,magnesium oxide,No,Mineral supplement in feed ration,,
+"maize grain, feed production","maize grain, feed",Yes,Concentrate feed ingredient,No,0.86
+maize silage production,maize silage,Yes,Primary forage feed,No,0.35
+"manure, liquid, cattle, Recycled Content cut-off","manure, liquid, cattle",No,"Manure output, not feed",,
+"manure, solid, cattle, Recycled Content cut-off","manure, solid, cattle",No,"Manure output, not feed",,
+oat grain production,oat grain,Yes,Concentrate feed ingredient,No,0.865
+"operation, housing system, cattle, loose","operation, housing system, cattle, loose, per animal unit",No,"Housing system, not feed",,
+"operation, housing system, cattle, tied","operation, housing system, cattle, tied, per animal unit",No,"Housing system, not feed",,
+Distiller's Dried Grains with Solubles to generic market for protein feed,"protein feed, 100% crude",Yes,Protein-rich co-product feed,Yes,1
+"market for protein feed, 100% crude","protein feed, 100% crude",Yes,Generic protein concentrate feed,Yes,1
+"market for sodium chloride, powder","sodium chloride, powder",No,Mineral feed additive (salt),,
+"soybean, feed production","soybean, feed",Yes,High-protein feed ingredient,No,0.89
+market for straw,straw,Yes,"Low-quality roughage, sometimes used in feed",No,0.85
+"market for transport, passenger, car, petrol, large size, EURO 4","transport, passenger, car, petrol, large size, EURO 4",No,"Transport service, not feed",,
+"wheat grain, feed production","wheat grain, feed",Yes,Concentrate feed ingredient,No,0.85
+"market for wood chips, dry, measured as dry mass","wood chips, dry, measured as dry mass",No,Not used as dairy feed (energy/industrial use),,
+market for selenium,selenium,No,Mineral trace element supplement,,
+"market for barley grain, feed","barley grain, feed",Yes,Concentrate feed ingredient,No,0.86
+"market for diesel, burned in agricultural machinery","diesel, burned in agricultural machinery",No,"Fuel input, not feed",,
+"market for inorganic nitrogen fertiliser, as N","inorganic nitrogen fertiliser, as N",No,"Fertiliser input, not feed",,
+"market for inorganic phosphorus fertiliser, as P2O5","inorganic phosphorus fertiliser, as P2O5",No,"Fertiliser input, not feed",,
+"market for inorganic potassium fertiliser, as K2O","inorganic potassium fertiliser, as K2O",No,"Fertiliser input, not feed",,
+"market for maize grain, feed","maize grain, feed",Yes,Concentrate feed ingredient,No,0.86
+"market for operation, housing system, cattle, loose, per animal unit","operation, housing system, cattle, loose, per animal unit",No,"Housing system, not feed",,
+"market for operation, housing system, cattle, tied, per animal unit","operation, housing system, cattle, tied, per animal unit",No,"Housing system, not feed",,
+market for rape meal,rape meal,Yes,Protein feed co-product,No,0.9
+"market for soybean, feed","soybean, feed",Yes,High-protein feed ingredient,No,0.89
+market for urea,urea,No,NPN feed supplement (ruminants),,
+market for wheat bran,wheat bran,Yes,By-product used as feed,No,0.87
+"market group for electricity, low voltage","electricity, low voltage",No,"Energy input, not feed",,
+market for alfalfa-grass silage,alfalfa-grass silage,Yes,Forage feed,Yes,1
+market for hay,hay,Yes,Forage feed,Yes,1
+"market group for inorganic nitrogen fertiliser, as N","inorganic nitrogen fertiliser, as N",No,"Fertiliser input, not feed",,
+"market group for inorganic phosphorus fertiliser, as P2O5","inorganic phosphorus fertiliser, as P2O5",No,"Fertiliser input, not feed",,
+"market group for inorganic potassium fertiliser, as K2O","inorganic potassium fertiliser, as K2O",No,"Fertiliser input, not feed",,
+market for maize silage,maize silage,Yes,Primary forage feed,No,0.28
+market for oat grain,oat grain,Yes,Concentrate feed ingredient,No,0.865
+"market for wheat grain, feed","wheat grain, feed",Yes,Concentrate feed ingredient,No,0.85

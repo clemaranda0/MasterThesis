@@ -1,0 +1,32 @@
+scenario_group,scenario,variable,unit,value,litterature
+agricultural_practices,improve_fertilizer_placement,variation_yield,%,13.50%,Wu 2024
+agricultural_practices,improve_fertilizer_placement,variation_N2O_emissions,%,-16.20%,Wu 2024
+agricultural_practices,improve_fertilizer_placement,variation_CO2_emissions,%,0.00%,Wu 2024
+agricultural_practices,improve_fertilizer_rate,variation_N_fertilizer,%,-50%,Yao 2024
+agricultural_practices,improve_fertilizer_rate,variation_yield,%,-10.90%,Yao 2024
+agricultural_practices,improve_fertilizer_rate,variation_N2O_emissions,%,-39.20%,Yao 2024
+agricultural_practices,improve_fertilizer_rate,variation_CO2_emissions,%,0.00%,Yao 2024
+crop_amendment,biochar_amendment,dose,kg,4.88E-01,"Zhong 2025, ecoinvent 3-12"
+crop_amendment,biochar_amendment,variation_yield,%,25.30%,Bai 2022
+crop_amendment,biochar_amendment,variation_N2O_emissions,%,-19.00%,Zhong 2025
+crop_amendment,biochar_amendment,variation_CO2_emissions,%,4.70%,Young 2021
+enhanced_efficiency_fertilizers,double_inhibitors,variation_yield,%,4.90%,Chen 2023
+enhanced_efficiency_fertilizers,double_inhibitors,variation_N2O_emissions,%,-36.00%,Chen 2023
+enhanced_efficiency_fertilizers,double_inhibitors,variation_CO2_emissions,%,0.00%,Chen 2023
+enhanced_efficiency_fertilizers,nitrification_inhibitors,variation_yield,%,12.90%,Chen 2023
+enhanced_efficiency_fertilizers,nitrification_inhibitors,variation_N2O_emissions,%,-44.00%,Chen 2023
+enhanced_efficiency_fertilizers,nitrification_inhibitors,variation_CO2_emissions,%,-8.90%,Chen 2023
+enhanced_efficiency_fertilizers,urease_inhibitors,variation_yield,%,6.20%,Chen 2023
+enhanced_efficiency_fertilizers,urease_inhibitors,variation_N2O_emissions,%,-24.00%,Chen 2023
+enhanced_efficiency_fertilizers,urease_inhibitors,variation_CO2_emissions,%,0.00%,Chen 2023
+ruminant_methane_mitigation,nop_supplementation,dose,kg,7.05E-05,Kebreab 2023
+ruminant_methane_mitigation,nop_supplementation,variation_yield,%,0.00%,Arndt 2022
+ruminant_methane_mitigation,nop_supplementation,variation_DMI,%,0.00%,Arndt 2022
+ruminant_methane_mitigation,nop_supplementation,variation_CH4_intensity,%,-32.60%,Kebreab 2023
+ruminant_methane_mitigation,increase_feed_level,variation_yield,%,16.80%,Arndt 2022
+ruminant_methane_mitigation,increase_feed_level,variation_DMI,%,58.30%,Arndt 2022
+ruminant_methane_mitigation,increase_feed_level,variation_CH4_intensity,%,-16.70%,Arndt 2022
+ruminant_methane_mitigation,nitrate_supplementation,dose,kg,1.38E-02,Dicks 2026
+ruminant_methane_mitigation,nitrate_supplementation,variation_yield,%,-0.31%,Dicks 2026
+ruminant_methane_mitigation,nitrate_supplementation,variation_DMI,%,-4.19%,Dicks 2026
+ruminant_methane_mitigation,nitrate_supplementation,variation_CH4_intensity,%,-20.10%,Dicks 2026

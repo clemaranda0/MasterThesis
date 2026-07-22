@@ -1,0 +1,5 @@
+product,from activity name,from reference product,from unit,flow type,comments
+cheese,"market group for electricity, low voltage","electricity, low voltage",kilowatt hour,technosphere,Assumed to be for milk processing : proportionnal to milk produced
+potato,"market for harvesting, use of harvesting cart","harvesting, use of harvesting cart",kilogram,technosphere,After harvest : proportionnal to potato quantity harvested
+potato,market for potato grading,potato grading,kilogram,technosphere,After harvest : proportionnal to potato quantity harvested
+potato,potato grading,potato grading,kilogram,technosphere,After harvest : proportionnal to potato quantity harvested
