@@ -3,9 +3,8 @@ repos:
   rev: v0.12.0
   hooks:
     - id: ruff-check
-      args: [--fix]
+      args: [--exit-zero]
       verbose: true
-      entry: bash -c 'ruff check "$@" || true' --
 
     - id: ruff-format
 
