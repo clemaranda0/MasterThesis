@@ -1,4 +1,3 @@
-````md
 # Master Thesis – Prospective LCA of Agri-Food Products
 
 This repository contains the code, input data, Scenario Difference Files (SDFs), and post-processing scripts developed for my Master's thesis on **prospective Life Cycle Assessment (LCA)** of agri-food products using **Brightway**, **Activity Browser**, and **premise**.
@@ -93,4 +92,3 @@ If you want to process your own Activity Browser results using `main_process_res
 This repository contains the code and datasets used for the analyses presented in the accompanying Master's thesis.
 
 For a detailed description of the methodology, assumptions, scenario implementation, and results, please refer to the thesis manuscript.
-````
