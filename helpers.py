@@ -923,93 +923,6 @@ def get_baseline_production_exchanges(activities, background_database, future_co
     return sdf_baseline_exchanges
 
 
-def model_projection_activity(projection_activities, co2_name):
-    projection_sdfs = []
-    for projection_activity in projection_activities:
-        for exc in projection_activity.exchanges():
-            if exc.input.get("name") == co2_name:
-                projection_sdfs.append(
-                    {
-                        "from activity name": exc.input["name"],
-                        "from reference product": exc.input.get("reference product"),
-                        "from location": exc.input.get("location"),
-                        "from unit": exc.input.get("unit"),
-                        "from categories": exc.input.get("categories"),
-                        "from database": exc.input.get("database"),
-                        "from key": str(
-                            (exc.input.get("database"), exc.input.get("code"))
-                        ),
-                        "to activity name": projection_activity["name"],
-                        "to reference product": projection_activity[
-                            "reference product"
-                        ],
-                        "to location": projection_activity["location"],
-                        "to categories": projection_activity.get("categories"),
-                        "to database": projection_activity["database"],
-                        "to key": str(
-                            (
-                                projection_activity.get("database"),
-                                projection_activity.get("code"),
-                            )
-                        ),
-                        "flow type": exc["type"],
-                        "baseline": exc["amount"],
-                    }
-                )
-
-    projection_sdf = pd.DataFrame(projection_sdfs)
-
-    return projection_sdf
-
-
-def generate_historical_projection(
-    sdf_baseline_exchanges, projection_sdf, year, future_columns
-):
-    target_year = [year]
-
-    sdf_baseline = sdf_baseline_exchanges.copy()
-    sdf_nulled = sdf_baseline.copy().assign(**{c: 0.0 for c in target_year})
-    sdf_baseline = sdf_baseline_exchanges.copy().assign(
-        **{c: 0.0 for c in future_columns if c not in target_year}
-    )
-    n_baseline = len(sdf_baseline)
-    sdf_stacked = pd.concat([sdf_baseline, sdf_nulled], ignore_index=True, sort=False)
-
-    mask_baseline = sdf_stacked.index < n_baseline
-    from_pfx, to_pfx = "from ", "to "
-    mp = projection_sdf.drop_duplicates(subset=["to location"], keep="first").set_index(
-        "to location"
-    )
-    loc_series = sdf_stacked.loc[mask_baseline, "from location"]
-    for col in sdf_stacked.columns:
-        if not isinstance(col, str) or not col.startswith(from_pfx):
-            continue
-        to_col = to_pfx + col[len(from_pfx) :]
-        if to_col not in mp.columns:
-            continue
-        sdf_stacked.loc[mask_baseline, col] = loc_series.map(mp[to_col]).values
-
-    sdf_historical_projection = sdf_stacked.drop(
-        columns=["from unit", "baseline"], errors="ignore"
-    ).reset_index(drop=True)
-
-    cols_order = list(sdf_historical_projection.columns)
-    year_cols = [c for c in future_columns if c in sdf_historical_projection.columns]
-    meta_cols = [
-        c
-        for c in sdf_historical_projection.columns
-        if c not in year_cols and c not in ("from key", "to key")
-    ]
-    agg_map = {c: "first" for c in meta_cols}
-    agg_map.update({c: "sum" for c in year_cols})
-    sdf_historical_projection = sdf_historical_projection.groupby(
-        ["from key", "to key"], as_index=False, sort=False
-    ).agg(agg_map, numeric_only=False)
-    sdf_historical_projection = sdf_historical_projection[cols_order]
-
-    return sdf_historical_projection
-
-
 def get_activity_information(activity_list):
     sdf_data = []
     for activity in activity_list:
@@ -1159,32 +1072,6 @@ def switch_fuel_tractors(
     ).agg(agg_map, numeric_only=False)
 
     return sdf_electric_tractors[cols_order]
-
-
-def prepare_future_emissions(predicted_impacts, baseline_impacts):
-    predicted_impacts["year"] = predicted_impacts["year"].astype(str)
-    baseline_impacts = baseline_impacts[
-        [
-            "name",
-            "location",
-            "EF v3.1 | climate change | global warming potential (GWP100)",
-        ]
-    ].rename(
-        columns={
-            "EF v3.1 | climate change | global warming potential (GWP100)": "emissions_intensity_baseline",
-            "location": "to location",
-        }
-    )
-
-    future_years = predicted_impacts[["year"]].drop_duplicates().sort_values("year")
-    baseline_expanded = baseline_impacts.merge(future_years, how="cross")
-
-    future_impacts = predicted_impacts.merge(baseline_expanded, on=["year"], how="left")
-    future_impacts["emissions_intensity"] = future_impacts[
-        "emissions_intensity_baseline"
-    ] * (1 + future_impacts["%_reduction_vs_baseline"] / 100)
-
-    return future_impacts
 
 
 def import_scenario_parameters(scenario_definitions, scenario_group):
